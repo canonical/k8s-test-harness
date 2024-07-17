@@ -38,8 +38,10 @@ class MultipassHarness(Harness):
         LOG.debug("Configured Multipass substrate (image %s)", self.image)
 
     def new_instance(self) -> Instance:
-        instance_id = f"k8s-integration-{os.urandom(3).hex()}-{self.next_id()}"
-
+        instance_id = os.getenv(
+            "ROCK_OVERWRITE_INSTANCE_NAME",
+            f"k8s-integration-{os.urandom(3).hex()}-{self.next_id()}",
+        )
         LOG.debug("Creating instance %s with image %s", instance_id, self.image)
         try:
             run(
