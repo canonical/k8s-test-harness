@@ -130,7 +130,7 @@ def wait_for_resource(
     namespace: str = constants.K8S_NS_DEFAULT,
     condition: str = constants.K8S_CONDITION_AVAILABLE,
     retry_times: int = 5,
-    retry_delay_s: int = 10,
+    retry_delay_s: int = 60,
 ):
     """Waits for the given resource to reach the given condition."""
     exec_util.stubbornly(retries=retry_times, delay_s=retry_delay_s).on(instance).exec(
@@ -155,7 +155,7 @@ def wait_for_deployment(
     namespace: str = constants.K8S_NS_DEFAULT,
     condition: str = constants.K8S_CONDITION_AVAILABLE,
     retry_times: int = 5,
-    retry_delay_s: int = 10,
+    retry_delay_s: int = 60,
 ):
     """Waits for the given deployment to reach the given condition."""
     wait_for_resource(
@@ -174,7 +174,7 @@ def wait_for_daemonset(
     name: str,
     namespace: str = constants.K8S_NS_DEFAULT,
     retry_times: int = 5,
-    retry_delay_s: int = 10,
+    retry_delay_s: int = 60,
 ):
     """Waits for the given daemonset to become available."""
     exec_util.stubbornly(retries=retry_times, delay_s=retry_delay_s).on(instance).exec(
@@ -198,7 +198,7 @@ def wait_for_statefulset(
     name: str,
     namespace: str = constants.K8S_NS_DEFAULT,
     retry_times: int = 5,
-    retry_delay_s: int = 10,
+    retry_delay_s: int = 60,
 ):
     """Waits for the given daemonset to become available."""
     exec_util.stubbornly(retries=retry_times, delay_s=retry_delay_s).on(instance).exec(
