@@ -3,6 +3,7 @@
 # See LICENSE file for licensing details
 #
 
+import functools
 import itertools
 import json
 import logging
@@ -30,6 +31,27 @@ def setup_k8s_snap(instance: harness.Instance):
 def purge_k8s_snap(instance: harness.Instance):
     LOG.info("Purge k8s snap")
     instance.exec(["sudo", "snap", "remove", "k8s", "--purge"])
+
+
+def describe_resources_on_error(resource_type: str):
+    def _decorator(fun):
+        @functools.wraps(fun)
+        def _inner(instance: harness.Instance, *args, **kwargs):
+            try:
+                return fun(instance, *args, **kwargs)
+            except Exception:
+                proc = instance.exec(
+                    ["k8s", "kubectl", "describe", resource_type], capture_output=True
+                )
+                LOG.info(
+                    f"### All current '{resource_type}' definitions: "
+                    f"{proc.stdout.decode()}"
+                )
+                raise
+
+        return _inner
+
+    return _decorator
 
 
 # Validates that the K8s node is in Ready state.
@@ -149,6 +171,8 @@ def wait_for_resource(
     )
 
 
+@describe_resources_on_error("pods")
+@describe_resources_on_error("deployment")
 def wait_for_deployment(
     instance: harness.Instance,
     name: str,
@@ -169,6 +193,8 @@ def wait_for_deployment(
     )
 
 
+@describe_resources_on_error("pods")
+@describe_resources_on_error("daemonsets")
 def wait_for_daemonset(
     instance: harness.Instance,
     name: str,
@@ -193,6 +219,8 @@ def wait_for_daemonset(
     )
 
 
+@describe_resources_on_error("pods")
+@describe_resources_on_error("statefulsets")
 def wait_for_statefulset(
     instance: harness.Instance,
     name: str,
