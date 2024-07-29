@@ -129,9 +129,11 @@ def wait_for_resource(
     name: str,
     namespace: str = constants.K8S_NS_DEFAULT,
     condition: str = constants.K8S_CONDITION_AVAILABLE,
+    retry_times: int = 5,
+    retry_delay_s: int = 10,
 ):
     """Waits for the given resource to reach the given condition."""
-    exec_util.stubbornly(retries=5, delay_s=1).on(instance).exec(
+    exec_util.stubbornly(retries=retry_times, delay_s=retry_delay_s).on(instance).exec(
         [
             "k8s",
             "kubectl",
@@ -142,7 +144,7 @@ def wait_for_resource(
             resource_type,
             name,
             "--timeout",
-            "60s",
+            "1s",
         ]
     )
 
@@ -152,16 +154,30 @@ def wait_for_deployment(
     name: str,
     namespace: str = constants.K8S_NS_DEFAULT,
     condition: str = constants.K8S_CONDITION_AVAILABLE,
+    retry_times: int = 5,
+    retry_delay_s: int = 10,
 ):
     """Waits for the given deployment to reach the given condition."""
-    wait_for_resource(instance, constants.K8S_DEPLOYMENT, name, namespace, condition)
+    wait_for_resource(
+        instance,
+        constants.K8S_DEPLOYMENT,
+        name,
+        namespace=namespace,
+        condition=condition,
+        retry_times=retry_times,
+        retry_delay_s=retry_delay_s,
+    )
 
 
 def wait_for_daemonset(
-    instance: harness.Instance, name: str, namespace: str = constants.K8S_NS_DEFAULT
+    instance: harness.Instance,
+    name: str,
+    namespace: str = constants.K8S_NS_DEFAULT,
+    retry_times: int = 5,
+    retry_delay_s: int = 10,
 ):
     """Waits for the given daemonset to become available."""
-    exec_util.stubbornly(retries=5, delay_s=1).on(instance).exec(
+    exec_util.stubbornly(retries=retry_times, delay_s=retry_delay_s).on(instance).exec(
         [
             "k8s",
             "kubectl",
@@ -172,7 +188,7 @@ def wait_for_daemonset(
             constants.K8S_DAEMONSET,
             name,
             "--timeout",
-            "60s",
+            "1s",
         ]
     )
 
