@@ -193,6 +193,30 @@ def wait_for_daemonset(
     )
 
 
+def wait_for_statefulset(
+    instance: harness.Instance,
+    name: str,
+    namespace: str = constants.K8S_NS_DEFAULT,
+    retry_times: int = 5,
+    retry_delay_s: int = 10,
+):
+    """Waits for the given daemonset to become available."""
+    exec_util.stubbornly(retries=retry_times, delay_s=retry_delay_s).on(instance).exec(
+        [
+            "k8s",
+            "kubectl",
+            "rollout",
+            "status",
+            "--namespace",
+            namespace,
+            constants.K8S_STATEFULSET,
+            name,
+            "--timeout",
+            "1s",
+        ]
+    )
+
+
 def get_helm_install_command(
     name: str,
     chart_name: str,
