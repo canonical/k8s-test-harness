@@ -13,6 +13,7 @@ https://github.com/canonical/k8s-workflows/blob/main/.github/workflows/build_roc
 
 import json
 import os
+import pathlib
 from dataclasses import dataclass
 from typing import Dict, List
 
@@ -224,7 +225,7 @@ def resolve_image(
         return f"{image_path}:{version}"
 
 
-def image_versions_in_repo(repo_path) -> List[str]:
+def image_versions_in_repo(repo_path: pathlib.Path) -> List[str]:
     """Returns a list of all ROCK versions found in rockcraft.yaml files
     in the given repository path.
 
