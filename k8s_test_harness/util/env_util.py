@@ -1,5 +1,5 @@
 #
-# Copyright 2024 Canonical, Ltd.
+# Copyright 2025 Canonical, Ltd.
 # See LICENSE file for licensing details
 #
 
@@ -15,6 +15,8 @@ import json
 import os
 from dataclasses import dataclass
 from typing import Dict, List
+
+import yaml
 
 DEFAULT_BUILT_ROCKS_METADATA_ENV_VAR = "BUILT_ROCKS_METADATA"
 
@@ -204,3 +206,30 @@ def get_build_meta_info_for_rock_version(
         )
 
     return matches[0]
+
+
+def resolve_image(
+    name: str, version: str, image_path: str | None = None, arch: str = "amd64"
+) -> str:
+    """Resolves the image for the given ROCK name, version, and architecture.
+
+    :returns: the resolved image string if found in the built ROCKs metadata,
+        otherwise returns the default image string of the form"""
+    image_path = image_path or f"github.com/canonical/{name}"
+    try:
+        rock = get_build_meta_info_for_rock_version(name, version, arch)
+        return rock.image
+    except OSError:
+        return f"{image_path}:{version}"
+
+
+def image_versions_in_repo(repo_path) -> List[str]:
+    """Returns a list of all ROCK versions found in rockcraft.yaml files
+    in the given repository path.
+
+    :param repo_path: Path to the root of the repository to scan.
+    :returns: List of ROCK versions found.
+    """
+    all_rockcrafts = repo_path.glob("**/rockcraft.yaml")
+    yamls = [yaml.safe_load(rock.read_bytes()) for rock in all_rockcrafts]
+    return [rock["version"] for rock in yamls]
