@@ -214,7 +214,8 @@ def resolve_image(
     """Resolves the image for the given ROCK name, version, and architecture.
 
     :returns: the resolved image string if found in the built ROCKs metadata,
-        otherwise returns the default image string of the form"""
+        otherwise returns the default image string of the form "{image_path}:{version}".
+    """
     image_path = image_path or f"github.com/canonical/{name}"
     try:
         rock = get_build_meta_info_for_rock_version(name, version, arch)
