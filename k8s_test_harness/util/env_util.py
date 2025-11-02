@@ -15,7 +15,7 @@ import json
 import os
 import pathlib
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import yaml
 
@@ -210,7 +210,7 @@ def get_build_meta_info_for_rock_version(
 
 
 def resolve_image(
-    name: str, version: str, image_path: str | None = None, arch: str = "amd64"
+    name: str, version: str, image_path: Optional[str] = None, arch: str = "amd64"
 ) -> str:
     """Resolves the image for the given ROCK name, version, and architecture.
 
