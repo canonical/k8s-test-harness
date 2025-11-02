@@ -225,13 +225,14 @@ def resolve_image(
         return f"{image_path}:{version}"
 
 
-def image_versions_in_repo(repo_path: pathlib.Path) -> List[str]:
+def image_versions_in_repo(image_name: str, repo_path: pathlib.Path) -> List[str]:
     """Returns a list of all ROCK versions found in rockcraft.yaml files
     in the given repository path.
 
+    :param image_name: Name of the ROCK to scan for.
     :param repo_path: Path to the root of the repository to scan.
     :returns: List of ROCK versions found.
     """
     all_rockcrafts = repo_path.glob("**/rockcraft.yaml")
     yamls = [yaml.safe_load(rock.read_bytes()) for rock in all_rockcrafts]
-    return [rock["version"] for rock in yamls]
+    return [rock["version"] for rock in yamls if rock["name"] == image_name]
