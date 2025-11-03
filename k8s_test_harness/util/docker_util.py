@@ -183,18 +183,24 @@ def get_image_version(image):
     return process.stdout.strip()
 
 
-def run_entrypoint_and_assert(image, entrypoint, expect_stdout_contains=None):
+def run_entrypoint_and_assert(image, entrypoint, expect_stdout_contains=None, expect_stderr_contains=None):
     """Runs the given entrypoint in the given image and asserts that it succeeds.
 
     If expect_stdout_contains is provided, also asserts that the given string
-    is contained in the stdout.
+    is contained in the stdout. Similarly for expect_stderr_contains.
     """
     entry = shlex.split(entrypoint) if isinstance(entrypoint, str) else entrypoint
     process = run_in_docker(image, entry, check_exit_code=False)
     assert (
         process.returncode == 0
     ), f"Failed to run {entry} in image {image}, stderr: {process.stderr}"
+
     if expect_stdout_contains:
         assert (
             expect_stdout_contains in process.stdout
         ), f"Expected '{expect_stdout_contains}' in stdout for {entry} in image {image}, stdout: {process.stdout}"
+
+    if expect_stderr_contains:
+        assert (
+            expect_stderr_contains in process.stderr
+        ), f"Expected '{expect_stderr_contains}' in stderr for {entry} in image {image}, stderr: {process.stderr}"
