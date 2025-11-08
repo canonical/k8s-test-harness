@@ -183,7 +183,9 @@ def get_image_version(image):
     return process.stdout.strip()
 
 
-def run_entrypoint_and_assert(image, entrypoint, expect_stdout_contains=None, expect_stderr_contains=None):
+def run_entrypoint_and_assert(
+    image, entrypoint, expect_stdout_contains=None, expect_stderr_contains=None
+):
     """Runs the given entrypoint in the given image and asserts that it succeeds.
 
     If expect_stdout_contains is provided, also asserts that the given string
