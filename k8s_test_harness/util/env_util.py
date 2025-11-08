@@ -209,22 +209,6 @@ def get_build_meta_info_for_rock_version(
     return matches[0]
 
 
-def resolve_image(
-    name: str, version: str, image_path: Optional[str] = None, arch: str = "amd64"
-) -> str:
-    """Resolves the image for the given ROCK name, version, and architecture.
-
-    :returns: the resolved image string if found in the built ROCKs metadata,
-        otherwise returns the default image string of the form "{image_path}:{version}".
-    """
-    image_path = image_path or f"github.com/canonical/{name}"
-    try:
-        rock = get_build_meta_info_for_rock_version(name, version, arch)
-        return rock.image
-    except OSError:
-        return f"{image_path}:{version}"
-
-
 def image_versions_in_repo(image_name: str, repo_path: pathlib.Path) -> List[str]:
     """Returns a list of all ROCK versions found in rockcraft.yaml files
     in the given repository path.
