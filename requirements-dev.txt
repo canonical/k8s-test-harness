@@ -1,5 +1,5 @@
 black==24.4.2
 codespell==2.3.0
 flake8==6.1.0
-isort==5.12.0
+isort==5.13.2
 licenseheaders==0.8.8
