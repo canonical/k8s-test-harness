@@ -9,7 +9,7 @@ import os
 import shlex
 import stat
 import subprocess
-from typing import List
+from typing import List, Optional, Union
 
 LOG = logging.getLogger(__name__)
 
@@ -184,7 +184,10 @@ def get_image_version(image):
 
 
 def run_entrypoint_and_assert(
-    image, entrypoint, expect_stdout_contains=None, expect_stderr_contains=None
+    image: str,
+    entrypoint: Union[str, List[str]],
+    expect_stdout_contains: Optional[str]=None,
+    expect_stderr_contains: Optional[str]=None
 ):
     """Runs the given entrypoint in the given image and asserts that it succeeds.
 
@@ -195,7 +198,7 @@ def run_entrypoint_and_assert(
     process = run_in_docker(image, entry, check_exit_code=False)
     assert (
         process.returncode == 0
-    ), f"Failed to run {entry} in image {image}, stderr: {process.stderr}"
+    ), f"Failed to run `{shlex.join(entry)}` in image {image}, {process.stdout=} {process.stderr=}"
 
     if expect_stdout_contains:
         assert (
