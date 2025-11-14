@@ -1,5 +1,5 @@
 #
-# Copyright 2024 Canonical, Ltd.
+# Copyright 2025 Canonical, Ltd.
 # See LICENSE file for licensing details
 #
 
@@ -13,8 +13,11 @@ https://github.com/canonical/k8s-workflows/blob/main/.github/workflows/build_roc
 
 import json
 import os
+import pathlib
 from dataclasses import dataclass
 from typing import Dict, List
+
+import yaml
 
 DEFAULT_BUILT_ROCKS_METADATA_ENV_VAR = "BUILT_ROCKS_METADATA"
 
@@ -204,3 +207,16 @@ def get_build_meta_info_for_rock_version(
         )
 
     return matches[0]
+
+
+def image_versions_in_repo(image_name: str, repo_path: pathlib.Path) -> List[str]:
+    """Returns a list of all ROCK versions found in rockcraft.yaml files
+    in the given repository path.
+
+    :param image_name: Name of the ROCK to scan for.
+    :param repo_path: Path to the root of the repository to scan.
+    :returns: List of ROCK versions found.
+    """
+    all_rockcrafts = repo_path.glob("**/rockcraft.yaml")
+    yamls = [yaml.safe_load(rock.read_bytes()) for rock in all_rockcrafts]
+    return [rock["version"] for rock in yamls if rock["name"] == image_name]

@@ -1,14 +1,15 @@
 #
-# Copyright 2024 Canonical, Ltd.
+# Copyright 2025 Canonical, Ltd.
 # See LICENSE file for licensing details
 #
 
 import json
 import logging
 import os
+import shlex
 import stat
 import subprocess
-from typing import List
+from typing import List, Optional, Union
 
 LOG = logging.getLogger(__name__)
 
@@ -180,3 +181,31 @@ def get_image_version(image):
         text=True,
     )
     return process.stdout.strip()
+
+
+def run_entrypoint_and_assert(
+    image: str,
+    entrypoint: Union[str, List[str]],
+    expect_stdout_contains: Optional[str]=None,
+    expect_stderr_contains: Optional[str]=None
+):
+    """Runs the given entrypoint in the given image and asserts that it succeeds.
+
+    If expect_stdout_contains is provided, also asserts that the given string
+    is contained in the stdout. Similarly for expect_stderr_contains.
+    """
+    entry = shlex.split(entrypoint) if isinstance(entrypoint, str) else entrypoint
+    process = run_in_docker(image, entry, check_exit_code=False)
+    assert (
+        process.returncode == 0
+    ), f"Failed to run `{shlex.join(entry)}` in image {image}, {process.stdout=} {process.stderr=}"
+
+    if expect_stdout_contains:
+        assert (
+            expect_stdout_contains in process.stdout
+        ), f"Expected '{expect_stdout_contains}' in stdout for {entry} in image {image}, stdout: {process.stdout}"
+
+    if expect_stderr_contains:
+        assert (
+            expect_stderr_contains in process.stderr
+        ), f"Expected '{expect_stderr_contains}' in stderr for {entry} in image {image}, stderr: {process.stderr}"

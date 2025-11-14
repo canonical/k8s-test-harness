@@ -1,5 +1,5 @@
 #
-# Copyright 2024 Canonical, Ltd.
+# Copyright 2025 Canonical, Ltd.
 # See LICENSE file for licensing details
 #
 from k8s_test_harness.harness.base import Harness, HarnessError, Instance
