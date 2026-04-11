@@ -21,3 +21,6 @@ namespaces = false
 
 [tool.setuptools.package-data]
 k8s_test_harness = ["*.yaml", "templates/*.yaml"]
+
+[tool.bandit]
+exclude_dirs = [".tox", ".venv", "venv"]
